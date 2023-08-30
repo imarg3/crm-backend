@@ -1,0 +1,18 @@
+[{
+  "id": 1,
+  "name": "Arpit Gupta",
+  "email": "arpit@gmail.com",
+  "mobile": "8989898989"
+},
+{
+"id": 2,
+"name": "Ram Gupta",
+"email": "ram@gmail.com",
+"mobile": "9876543210"
+},
+{
+"id": 3,
+"name": "Tony Stark",
+"email": "tonys@gmail.com",
+"mobile": "9876543210"
+}]

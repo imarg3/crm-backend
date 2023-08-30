@@ -18,7 +18,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        String[] openEndPoints = {"/v1/api/user/registration"};
+        String[] openEndPoints = {"/actuator/**", "/v1/api/user/registration"};
         String[] customerEndPoints = {"/v1/api/customer/**"};
 
         http

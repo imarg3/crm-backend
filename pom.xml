@@ -13,6 +13,15 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>bluetick</name>
 	<description>Demo project for Spring Boot</description>
+
+	<developers>
+		<developer>
+			<id>arpit</id>
+			<name>Arpit Gupta</name>
+			<email>gupta.arpit03@gmail.com</email>
+		</developer>
+	</developers>
+
 	<properties>
 		<java.version>17</java.version>
 		<testcontainers.version>1.17.6</testcontainers.version>

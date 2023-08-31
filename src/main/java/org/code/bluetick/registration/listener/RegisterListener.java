@@ -7,18 +7,17 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RegisterListener implements ApplicationListener<OnRegistrationCompleteEvent> {
     private final IUserService userService;
 
-    private final JavaMailSenderImpl mailSender;
+    private final JavaMailSender mailSender;
 
     private final Environment environment;
 
-    public RegisterListener(IUserService userService, JavaMailSenderImpl mailSender, Environment environment) {
+    public RegisterListener(IUserService userService, JavaMailSender mailSender, Environment environment) {
         this.userService = userService;
         this.mailSender = mailSender;
         this.environment = environment;
@@ -27,7 +26,7 @@ public class RegisterListener implements ApplicationListener<OnRegistrationCompl
     @Override
     public void onApplicationEvent(OnRegistrationCompleteEvent event) {
         System.out.println("Event received : User - " + event.getUser().getEmail() + ", AppURL - " + event.getAppUrl() + ", Locale -" + event.getLocale());
-        // this.confirmRegistration(event);
+        this.confirmRegistration(event);
     }
 
     private void confirmRegistration(final OnRegistrationCompleteEvent event) {

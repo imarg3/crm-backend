@@ -1,48 +1,54 @@
 package org.code.bluetick.web.mapstruct.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.code.bluetick.validation.PasswordMatches;
-import org.code.bluetick.validation.ValidEmail;
 import org.code.bluetick.validation.ValidPassword;
 
 @PasswordMatches
-@Data
+@Getter
+@Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserDto {
-    @NotNull
-    @Size(min = 1, max = 50, message = "{Size.userDto.firstName}")
+    @NotNull(message = "Please provide User full name")
+    @Size(min = 2, max = 50, message = "User full Name must be between 2 to 50 characters")
     private String fullName;
 
-    @NotNull
-    @Size(min = 1, max = 50, message = "{Size.userDto.lastName}")
+    @NotNull(message = "Please provide User business name")
+    @Size(min = 2, max = 50, message = "Business Name must be between 2 to 50 characters")
     private String businessName;
 
+    @NotNull(message = "Please provide User password")
     @ValidPassword
     private String password;
 
-    @NotNull
+    @NotNull(message = "Please provide User matching password")
     @Size(min = 8)
     private String matchingPassword;
 
-    @ValidEmail
-    @NotNull
-    @Size(min = 1, message = "{Size.userDto.email}")
+    @Email(message = "Email is not valid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
+    @NotEmpty(message = "Email cannot be empty")
+    @NotNull(message = "Please provide User email address")
     private String email;
 
-    @NotNull
+    @NotNull(message = "Please provide User mobile number")
     @Size(max = 13)
     private String mobile;
 
-    @NotNull
+    @NotNull(message = "Please provide User country name")
     @Size(min = 3, max = 30, message = "Please provide country name (3 to 30 characters")
     private String country;
 
-    @NotNull
+    @NotNull(message = "Please provide User state name")
     @Size(min = 3, max = 30, message = "Please provide state name (3 to 30 characters")
     private String state;
 
-    @NotNull
+    @NotNull(message = "Please provide User city name")
     @Size(min = 3, max = 30, message = "Please provide city name (3 to 30 characters")
     private String city;
 }

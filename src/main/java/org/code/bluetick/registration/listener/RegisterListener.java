@@ -7,17 +7,18 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RegisterListener implements ApplicationListener<OnRegistrationCompleteEvent> {
     private final IUserService userService;
 
-    private final JavaMailSender mailSender;
+    private final JavaMailSenderImpl mailSender;
 
     private final Environment environment;
 
-    public RegisterListener(IUserService userService, JavaMailSender mailSender, Environment environment) {
+    public RegisterListener(IUserService userService, JavaMailSenderImpl mailSender, Environment environment) {
         this.userService = userService;
         this.mailSender = mailSender;
         this.environment = environment;

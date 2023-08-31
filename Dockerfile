@@ -4,7 +4,7 @@
 FROM maven:3.8.3-openjdk-17 AS build
 MAINTAINER Arpit Gupta <gupta.arpit03@gmail.com>
 COPY . .
-RUN mvn clean package -DskipTests
+RUN mvn clean package -Pprod -DskipTests
 
 #
 # Package stage

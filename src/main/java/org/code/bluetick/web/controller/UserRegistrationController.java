@@ -5,8 +5,8 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.code.bluetick.persistence.model.User;
 import org.code.bluetick.registration.OnRegistrationCompleteEvent;
-import org.code.bluetick.service.IUserService;
 import org.code.bluetick.service.UserService;
+import org.code.bluetick.service.UserServiceImpl;
 import org.code.bluetick.web.mapstruct.dto.UserDto;
 import org.code.bluetick.web.mapstruct.mapper.MapStructMapper;
 import org.code.bluetick.web.util.GenericResponse;
@@ -17,9 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -28,11 +26,11 @@ import java.util.Optional;
 public class UserRegistrationController {
     private final MapStructMapper mapStructMapper;
 
-    private final IUserService userService;
+    private final UserService userService;
 
     private final ApplicationEventPublisher eventPublisher;
 
-    public UserRegistrationController(MapStructMapper mapStructMapper, UserService userService, ApplicationEventPublisher eventPublisher) {
+    public UserRegistrationController(MapStructMapper mapStructMapper, UserServiceImpl userService, ApplicationEventPublisher eventPublisher) {
         this.mapStructMapper = mapStructMapper;
         this.userService = userService;
         this.eventPublisher = eventPublisher;

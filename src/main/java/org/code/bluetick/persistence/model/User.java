@@ -11,7 +11,7 @@ import java.time.Instant;
 import java.util.Collection;
 
 @Entity
-@Table(name = "user", schema = "crm")
+@Table(name = "user")
 @Builder
 @Getter@Setter
 @NoArgsConstructor

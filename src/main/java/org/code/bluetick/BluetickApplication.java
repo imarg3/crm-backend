@@ -2,8 +2,10 @@ package org.code.bluetick;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
@@ -18,6 +20,8 @@ import java.util.Properties;
 @EnableJpaAuditing
 @Slf4j
 public class BluetickApplication {
+	@Value("${spring.mail.host}")
+	private static String mailHost;
 
 	@PostConstruct
 	public void init() {
@@ -27,11 +31,13 @@ public class BluetickApplication {
 
 	public static void main(String[] args) {
 		logGitInfo();
+		System.out.println("Mail Host - " + mailHost);
 		System.out.println(System.getenv(("MAIL_USERNAME")));
 		System.out.println(System.getenv(("MAIL_PASSWORD")));
 		System.out.println(System.getenv(("DB_USERNAME")));
 		System.out.println(System.getenv(("DB_PASSWORD")));
-		SpringApplication.run(BluetickApplication.class, args);
+		ConfigurableApplicationContext ctx = SpringApplication.run(BluetickApplication.class, "--debug");
+		System.out.println(ctx.getEnvironment().getProperty("spring.mail.host"));
 	}
 
 	public static void logGitInfo() {

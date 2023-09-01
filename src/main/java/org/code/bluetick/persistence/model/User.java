@@ -17,7 +17,7 @@ import java.util.Collection;
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@SequenceGenerator(name="userSeq", sequenceName = "USER_SEQ", allocationSize = 1)
+@SequenceGenerator(name="userSeq", sequenceName = "USER_SEQ", allocationSize = 1, schema = "crm")
 public class User {
     @Id
     @Column(unique = true, nullable = false, updatable = false)

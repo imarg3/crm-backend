@@ -79,6 +79,7 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
+            schema = "crm",
             joinColumns = @JoinColumn(
                     name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(

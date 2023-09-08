@@ -34,8 +34,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        String[] openEndPoints = {"/api/v1/auth/sign-up", "/api/v1/auth/sign-in"};
-        String[] healthEndPoints = {"/actuator/**", "/api-docs","/swagger-ui-custom.html"};
+        String[] openEndPoints = {"/api/v1/auth/**"};
+        String[] healthEndPoints = {"/actuator/**", "/api-docs/**","/swagger-ui-custom.html", "/swagger-ui/**"};
         String[] customerEndPoints = {"/v1/api/customer/**"};
 
         http
@@ -43,9 +43,9 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers(openEndPoints).permitAll()
                         .requestMatchers(customerEndPoints).authenticated()
-                        .requestMatchers(HttpMethod.GET, healthEndPoints).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, healthEndPoints).permitAll()
                         .anyRequest().authenticated()
                 );
 

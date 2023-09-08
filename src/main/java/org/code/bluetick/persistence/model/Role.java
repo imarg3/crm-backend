@@ -8,7 +8,7 @@ import org.code.bluetick.enums.ERole;
 import java.util.Set;
 
 @Entity
-@Table(name = "role")
+@Table(name = "role", schema = "crm")
 @Builder
 @Getter
 @Setter

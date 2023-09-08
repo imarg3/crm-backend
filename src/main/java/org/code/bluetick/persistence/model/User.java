@@ -1,17 +1,23 @@
 package org.code.bluetick.persistence.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.type.NumericBooleanConverter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "user", schema = "crm")
+@Table(name = "user", schema = "crm",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = "email_id"),
+            @UniqueConstraint(columnNames = "mobile_number"),
+    })
 @Builder
 @Getter@Setter
 @NoArgsConstructor
@@ -66,7 +72,8 @@ public class User {
     //@NotNull(message = "Updated date must be specified.")
     private Instant updatedAt;
 
-    @Column(name = "enabled", nullable = false)
+    @Convert(converter = NumericBooleanConverter.class)
+    @Column(name = "enabled", nullable = false, columnDefinition = "INT2")
     private boolean enabled;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -77,5 +84,5 @@ public class User {
             inverseJoinColumns = @JoinColumn(
                     name = "role_id", referencedColumnName = "id")
     )
-    private Collection<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 }

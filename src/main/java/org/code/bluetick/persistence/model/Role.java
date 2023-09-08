@@ -3,8 +3,9 @@ package org.code.bluetick.persistence.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.code.bluetick.enums.ERole;
 
-import java.util.Collection;
+import java.util.Set;
 
 @Entity
 @Table(name = "role")
@@ -22,11 +23,12 @@ public class Role {
     private Long id;
 
     @Column(name = "name", nullable = false)
+    @Enumerated(EnumType.STRING)
     @NotNull(message = "Role Name must be specified.")
-    private String name;
+    private ERole name;
 
     @ManyToMany(mappedBy = "roles")
-    private Collection<User> users;
+    private Set<User> users;
 
     @ManyToMany
     @JoinTable(
@@ -35,5 +37,5 @@ public class Role {
                     name = "role_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(
                     name = "privilege_id", referencedColumnName = "id"))
-    private Collection<Privilege> privileges;
+    private Set<Privilege> privileges;
 }

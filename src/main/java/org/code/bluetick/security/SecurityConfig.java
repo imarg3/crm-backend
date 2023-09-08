@@ -1,33 +1,57 @@
 package org.code.bluetick.security;
 
+import lombok.AllArgsConstructor;
+import org.code.bluetick.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@AllArgsConstructor
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
+
+    private final UserDetailsServiceImpl userInfoUserDetailsService;
+
+    private final AuthEntryPointJwt unauthorizedHandler;
+
+    @Bean
+    public AuthTokenFilter authenticationJwtTokenFilter() {
+        return new AuthTokenFilter();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        String[] openEndPoints = {"/actuator/**", "/v1/api/user/registration"};
+        String[] openEndPoints = {"/api/v1/auth/sign-up", "/api/v1/auth/sign-in"};
+        String[] healthEndPoints = {"/actuator/**", "/api-docs","/swagger-ui-custom.html"};
         String[] customerEndPoints = {"/v1/api/customer/**"};
 
         http
-                .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(customerEndPoints).authenticated()
-                        .requestMatchers(openEndPoints).permitAll()
-                )
                 .csrf(AbstractHttpConfigurer::disable)
-                .httpBasic(Customizer.withDefaults());
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers(customerEndPoints).authenticated()
+                        .requestMatchers(HttpMethod.GET, healthEndPoints).hasRole("ADMIN")
+                        .anyRequest().authenticated()
+                );
+
+
+        http.authenticationProvider(authenticationProvider());
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -38,11 +62,15 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService testOnlyUsers(PasswordEncoder passwordEncoder) {
-        User.UserBuilder users = User.builder();
-        UserDetails arpit = users.username("arpit").password(passwordEncoder.encode("arpit123"))
-                .roles()
-                .build();
-        return new InMemoryUserDetailsManager(arpit);
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userInfoUserDetailsService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        return authenticationProvider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
     }
 }

@@ -1,9 +1,12 @@
 spring:
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    properties:
+      hibernate:
+        default_schema: crm
     generate-ddl: true
     hibernate:
       ddl-auto: create
-  datasource:
-    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-    url: jdbc:tc:postgres:12.9:///test
+#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+#  datasource:
+#    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+#    url: jdbc:tc:postgres:12.9:///test

@@ -1,4 +1,4 @@
-package org.code.bluetick.repository;
+package org.code.bluetick.persistence.repository;
 
 import org.code.bluetick.DatabaseTest;
 import org.code.bluetick.persistence.model.Customer;

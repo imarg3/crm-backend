@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.Collection;
+import java.util.Set;
 
 @Entity
 @Table(name = "privilege")
@@ -25,5 +25,5 @@ public class Privilege {
     private String name;
 
     @ManyToMany(mappedBy = "privileges")
-    private Collection<Role> roles;
+    private Set<Role> roles;
 }

@@ -15,25 +15,14 @@ public class ApiError {
 
     private String message;
 
-    private List<String> errors;
+    private String description;
 
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime timestamp = LocalDateTime.now();
 
-    public ApiError(final HttpStatus status, final String message) {
+    public ApiError(final HttpStatus status, final String message, String description) {
         this.status = status;
         this.message = message;
-    }
-
-    public ApiError(final HttpStatus status, final String message, List<String> errors) {
-        this.status = status;
-        this.message = message;
-        this.errors = errors;
-    }
-
-    public ApiError(final HttpStatus status, final Throwable ex) {
-        this.status = status;
-        this.message = ex.getMessage() == null ? ex.getClass().getSimpleName() : ex.getMessage();
+        this.description = description;
     }
 }

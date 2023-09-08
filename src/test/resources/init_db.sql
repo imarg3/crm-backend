@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS crm."user"
     city character varying(30) COLLATE pg_catalog."default" NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    enabled boolean NOT NULL,
+    enabled smallint NOT NULL,
     CONSTRAINT id_unique PRIMARY KEY (id),
     CONSTRAINT email_unique UNIQUE (email_id),
     CONSTRAINT mobile_unique UNIQUE (mobile_number)
@@ -119,3 +119,10 @@ CREATE SEQUENCE IF NOT EXISTS crm.privilege_seq
 CREATE SEQUENCE IF NOT EXISTS crm.customer_seq
     INCREMENT 1
     START 1;
+
+--- data
+INSERT INTO crm.role VALUES (1, 'ADMIN');
+INSERT INTO crm.role VALUES (2, 'AGENT');
+
+INSERT INTO crm.privilege VALUES(1, 'READ_PRIVILEGE');
+INSERT INTO crm.privilege VALUES(2, 'WRITE_PRIVILEGE');

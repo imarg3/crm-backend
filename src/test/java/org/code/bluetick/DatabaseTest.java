@@ -14,7 +14,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public abstract  class DatabaseTest {
     @Container
     private static final PostgreSQLContainer<?> database = new PostgreSQLContainer<>("postgres:12.9")
-            .withInitScript("init_db.sql");
+            .withInitScript("init_db_bkp.sql");
 
     public static class DataSourceInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 

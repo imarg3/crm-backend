@@ -1,27 +1,25 @@
 package org.code.bluetick.web.mapstruct.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
-import org.code.bluetick.enums.LeadStatus;
 
-import java.time.LocalDate;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import org.code.bluetick.enums.Services;
 
-@Getter
-@Setter
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LeadDto {
-    @JsonProperty("id")
-    private Long id;
 
     @JsonProperty("customer")
-    private CustomerDto customer;
-
-    @JsonProperty("createdDate")
-    private LocalDate createdDate;
+    @NotNull(message = "Please provide all the required customer details")
+    CustomerDto customer;
 
     @JsonProperty("travelDetail")
-    private TravelDetailDto travelDetail;
+    @NotNull(message = "Please provide all the required travel details")
+    TravelDetailDto travelDetail;
 
-    @JsonProperty("status")
-    private LeadStatus status;
+    @JsonProperty("services")
+    @NotNull(message = "Please provide all the required customer services")
+    Services[] services;
 }

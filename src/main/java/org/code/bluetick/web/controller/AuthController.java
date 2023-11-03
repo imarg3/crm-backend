@@ -48,7 +48,10 @@ public class AuthController {
         final User registered = userService.registerNewUserAccount(mapStructMapper.userDtoToUser(userDto));
         eventPublisher.publishEvent(new OnRegistrationCompleteEvent(registered, request.getLocale(), getAppUrl(request)));
 
-        return ResponseEntity.status(201).body(new GenericResponse("User is successfully registered.", HttpStatus.OK));
+        return ResponseEntity.status(201).body(GenericResponse.builder()
+                .message("User is successfully registered.")
+                .status(HttpStatus.OK)
+                .build());
     }
 
     @PostMapping("/sign-in")

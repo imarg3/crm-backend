@@ -1,5 +1,7 @@
 package org.code.bluetick.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.util.stream.Stream;
 
 public enum PersonType {
@@ -11,6 +13,7 @@ public enum PersonType {
         this.type = type;
     }
 
+    @JsonValue
     public String getPersonType() {
         return type;
     }

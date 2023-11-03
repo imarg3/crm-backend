@@ -1,10 +1,13 @@
 package org.code.bluetick.web.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.code.bluetick.persistence.model.Customer;
-import org.code.bluetick.service.CustomerService;
+import org.code.bluetick.service.CustomerServiceImpl;
+import org.code.bluetick.web.payload.GenericResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,18 +16,14 @@ import jakarta.validation.Valid;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/v1/api/customer")
+@RequestMapping("/api/v1/customer")
 @Slf4j
+@AllArgsConstructor
 public class CustomerController {
-    private final CustomerService customerService;
-
-    public CustomerController(CustomerService customerService) {
-        this.customerService = customerService;
-    }
+    private final CustomerServiceImpl customerService;
 
     @GetMapping("/all")
     public ResponseEntity<List<Customer>> getAllCustomers(Pageable pageable) {
@@ -33,35 +32,37 @@ public class CustomerController {
     }
 
     @PostMapping(value = "/create", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Customer> createCustomer(@Valid Customer customer) {
-        return ResponseEntity.status(201).body(customerService.createCustomer(customer));
+    public ResponseEntity<GenericResponse> createCustomer(@Valid Customer customer) {
+        return ResponseEntity.status(201).body(GenericResponse.builder()
+                .message("Customer is successfully created.")
+                .status(HttpStatus.OK)
+                .build());
     }
 
     @GetMapping("/{emailId}")
-    public ResponseEntity<Customer> findCustomerById(@PathVariable String emailId) {
-        Optional<Customer> customerOptional = customerService.findCustomerByEmailId(emailId);
-        return customerOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<GenericResponse> findCustomerByEmailId(@PathVariable String emailId) {
+
+        Customer customer = customerService.findCustomerByEmail(emailId);
+        return ResponseEntity.status(200).body(GenericResponse.builder()
+                .message("Customer found: " + customer)
+                .status(HttpStatus.OK)
+                .build());
     }
 
     @PutMapping(value = "/update/{emailId}", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Customer> updateCustomer(@PathVariable String emailId, @Valid Customer customerUpdate, Principal principal){
         log.info(principal.getName());
-        Optional<Customer> customerOptional = customerService.findCustomerByEmailId(emailId);
-        if(customerOptional.isPresent()) {
-            Customer customer = customerOptional.get();
-            Customer updatedCustomer = Customer.builder()
-                    .id(customer.getId())
-                    .name(customerUpdate.getName())
-                    .email(customerUpdate.getEmail())
-                    .mobile(customerUpdate.getMobile())
-                    .build();
+        Customer customer  = customerService.findCustomerByEmail(emailId);
+        Customer updatedCustomer = Customer.builder()
+                .id(customer.getId())
+                .name(customerUpdate.getName())
+                .email(customerUpdate.getEmail())
+                .mobile(customerUpdate.getMobile())
+                .build();
 
-            customerService.createCustomer(updatedCustomer);
+        customerService.createNewCustomer(updatedCustomer);
 
-            return ResponseEntity.ok(updatedCustomer);
-        }
-
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(updatedCustomer);
     }
 
     @DeleteMapping("/delete/{id}")

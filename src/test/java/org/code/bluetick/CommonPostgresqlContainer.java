@@ -12,7 +12,7 @@ public class CommonPostgresqlContainer extends PostgreSQLContainer<CommonPostgre
 
     public static CommonPostgresqlContainer getInstance() {
         if (container == null) {
-            container = new CommonPostgresqlContainer().withInitScript("init_db.sql").withReuse(true);
+            container = new CommonPostgresqlContainer().withInitScript("init_db_bkp.sql").withReuse(true);
         }
         return container;
     }

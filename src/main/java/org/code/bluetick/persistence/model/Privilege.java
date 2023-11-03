@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Set;
 
 @Entity
@@ -14,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @SequenceGenerator(name="privilegeSeq", sequenceName = "PRIVILEGE_SEQ", allocationSize = 1)
-public class Privilege {
+public class Privilege implements Serializable {
     @Id
     @Column(unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "privilegeSeq")

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.code.bluetick.enums.ERole;
 
+import java.io.Serializable;
 import java.util.Set;
 
 @Entity
@@ -15,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @SequenceGenerator(name="roleSeq", sequenceName = "ROLE_SEQ", allocationSize = 1)
-public class Role {
+public class Role implements Serializable {
 
     @Id
     @Column(unique = true, nullable = false, updatable = false)

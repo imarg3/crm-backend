@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
             throw new UserAlreadyExistException("There is already an account with that email address: " + user.getEmail());
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(Set.of(roleRepository.findByName(ERole.ROLE_AGENT).get()));
+        user.setRoles(Set.of(roleRepository.findByName(ERole.ROLE_AGENT)));
         return userRepository.save(user);
     }
 

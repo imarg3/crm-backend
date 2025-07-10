@@ -438,3 +438,9 @@ ALTER TABLE ONLY crm.lead
 -- PostgreSQL database dump complete
 --
 
+--- data
+INSERT INTO crm.role VALUES (1, 'ROLE_ADMIN');
+INSERT INTO crm.role VALUES (2, 'ROLE_AGENT');
+
+INSERT INTO crm.privilege VALUES(1, 'READ_PRIVILEGE');
+INSERT INTO crm.privilege VALUES(2, 'WRITE_PRIVILEGE');

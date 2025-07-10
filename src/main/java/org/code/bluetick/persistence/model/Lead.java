@@ -36,6 +36,8 @@ public class Lead implements Serializable {
     private Long id;
 
     @Column(name="lead_id", unique = true, nullable = false)
+    @jakarta.validation.constraints.NotNull(message = "Lead ID must be specified")
+    @jakarta.validation.constraints.Size(min = 5, max = 50, message = "Lead ID must be between 5 and 50 characters")
     private String leadId;
 
     @ToString.Exclude
@@ -43,16 +45,19 @@ public class Lead implements Serializable {
             CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH
     })
     @JoinColumn(name = "customer_id")
+    @jakarta.validation.constraints.NotNull(message = "Customer must be specified")
     private Customer customer;
 
     @ToString.Exclude
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "travel_detail_id")
+    @jakarta.validation.constraints.NotNull(message = "Travel details must be specified")
     private TravelDetail travelDetail;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", columnDefinition = "crm.status", nullable = false)
     @ColumnTransformer(write = "?::crm.lead_status")
+    @jakarta.validation.constraints.NotNull(message = "Status must be specified")
     private LeadStatus status;
 
     @Enumerated(EnumType.STRING)
@@ -61,6 +66,8 @@ public class Lead implements Serializable {
             name = AbstractArrayType.SQL_ARRAY_TYPE,
             value = "crm.services"
     ))
+    @jakarta.validation.constraints.NotNull(message = "Services must be specified")
+    @jakarta.validation.constraints.Size(min = 1, message = "At least one service must be selected")
     private Services[] services;
 
     @CreatedDate

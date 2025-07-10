@@ -33,16 +33,24 @@ public class Customer implements Serializable {
     private Long id;
 
     @Column(name = "name", nullable = false)
+    @jakarta.validation.constraints.NotNull(message = "Name must be specified")
+    @jakarta.validation.constraints.Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
     private String name;
 
     @Column(name = "email", nullable = false, unique = true)
+    @jakarta.validation.constraints.NotNull(message = "Email must be specified")
+    @jakarta.validation.constraints.Email(message = "Email should be valid")
     private String email;
 
     @Column(name = "mobile", nullable = false, unique = true)
+    @jakarta.validation.constraints.NotNull(message = "Mobile must be specified")
+    @jakarta.validation.constraints.Pattern(regexp = "^[+]?[0-9]{10,15}$", message = "Mobile number should be valid")
     private String mobile;
 
     @Column(name="birth_date", nullable = false)
     @DateTimeFormat(pattern = "dd-MM-yyyy")
+    @jakarta.validation.constraints.NotNull(message = "Birth date must be specified")
+    @jakarta.validation.constraints.Past(message = "Birth date must be in the past")
     private LocalDate birthDate;
 
     @CreatedDate

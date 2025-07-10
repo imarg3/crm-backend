@@ -1,6 +1,7 @@
 package org.code.bluetick.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.code.bluetick.enums.LeadStatus;
 import org.code.bluetick.persistence.model.Customer;
 import org.code.bluetick.persistence.model.Lead;
@@ -10,11 +11,15 @@ import org.code.bluetick.persistence.repository.LeadRepository;
 import org.code.bluetick.utils.LeadUtils;
 import org.code.bluetick.web.exception.LeadAlreadyExistException;
 import org.code.bluetick.web.exception.LeadNotFoundException;
+import org.code.bluetick.web.mapstruct.dto.LeadDto;
+import org.code.bluetick.web.mapstruct.dto.LeadResponseDto;
+import org.code.bluetick.web.mapstruct.mapper.MapStructMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.List;
@@ -22,61 +27,65 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class LeadServiceImpl implements LeadService{
+@Slf4j
+@Transactional
+public class LeadServiceImpl implements LeadService {
     private final LeadRepository leadRepository;
+    private final MapStructMapper mapStructMapper;
 
     @Override
-    public Lead createNewLead(final Lead lead) {
-        System.out.println("Lead data :: " + lead);
-        Assert.notNull(lead, "Lead must not be null");
-        if(leadAlreadyExists(lead.getLeadId())) {
-            throw new LeadAlreadyExistException("There is already a lead with a lead id: " + lead.getLeadId());
-        }
-
-        System.out.println("Customer Info :: " + lead.getCustomer());
-
-        /*
-        if (customerRepository.findByEmail(lead.getCustomer().getEmail()).isEmpty() &&
-
-            customerRepository.findByMobile(lead.getCustomer().getMobile()).isEmpty()){
-            customerRepository.save(lead.getCustomer());
-        }
-        */
-        System.out.println("Travel Detail Info :: " + lead.getTravelDetail());
-        System.out.println("Travellers Info :: " + lead.getTravelDetail().getTravellers());
-
+    public LeadResponseDto createNewLead(final LeadDto leadDto) {
+        log.info("Creating new lead for customer email: {}", leadDto.getCustomer().getEmail());
+        Assert.notNull(leadDto, "Lead must not be null");
+        
+        Lead lead = mapStructMapper.leadDtoToLead(leadDto);
+        
+        // Generate a unique lead ID
         final String leadId = LeadUtils.generateLeadID();
-        System.out.println("Lead ID :: " + leadId);
+        log.debug("Generated lead ID: {}", leadId);
+        
+        if (leadAlreadyExists(leadId)) {
+            throw new LeadAlreadyExistException("There is already a lead with a lead id: " + leadId);
+        }
+        
         lead.setLeadId(leadId);
         lead.setStatus(LeadStatus.QUOTE_SENT);
 
+        // Set up bi-directional relationships
         Customer customer = lead.getCustomer();
-        System.out.println("Customer get :: " + customer);
         TravelDetail travelDetail = lead.getTravelDetail();
-        System.out.println("Travel Detail get :: " + travelDetail);
-        List<Traveller> travellers = lead.getTravelDetail().getTravellers();
-        travellers.forEach(traveller -> traveller.setTravelDetail(travelDetail));
+        
+        if (travelDetail.getTravellers() != null) {
+            travelDetail.getTravellers().forEach(traveller -> traveller.setTravelDetail(travelDetail));
+        }
 
-        return leadRepository.save(lead);
+        Lead savedLead = leadRepository.save(lead);
+        log.info("Lead created successfully with ID: {}", savedLead.getLeadId());
+        
+        return mapStructMapper.leadToLeadResponseDto(savedLead);
     }
 
     @Override
-    public Lead findLeadByLeadId(String leadId) {
+    @Transactional(readOnly = true)
+    public LeadResponseDto findLeadByLeadId(String leadId) {
+        log.debug("Finding lead by lead ID: {}", leadId);
         Optional<Lead> optionalLead = leadRepository.findByLeadId(leadId);
-        if(optionalLead.isPresent()) {
-            return optionalLead.get();
-        } else {
-            throw new LeadNotFoundException("No lead found with lead id: " + leadId);
-        }
+        Lead lead = optionalLead.orElseThrow(() -> 
+            new LeadNotFoundException("No lead found with lead id: " + leadId));
+        return mapStructMapper.leadToLeadResponseDto(lead);
     }
 
-    public Page<Lead> getAllLeads(Pageable pageable) {
-        return leadRepository.findAll(
+    @Override
+    @Transactional(readOnly = true)
+    public List<LeadResponseDto> getAllLeads(Pageable pageable) {
+        log.debug("Retrieving all leads with pagination");
+        Page<Lead> leadPage = leadRepository.findAll(
                 PageRequest.of(
                         pageable.getPageNumber(),
                         pageable.getPageSize(),
                         pageable.getSortOr(Sort.by(Sort.Direction.ASC, "id"))
                 ));
+        return mapStructMapper.leadListToLeadResponseDtoList(leadPage.getContent());
     }
 
     private boolean leadAlreadyExists(final String leadId) {

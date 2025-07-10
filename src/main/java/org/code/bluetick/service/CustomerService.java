@@ -1,17 +1,22 @@
 package org.code.bluetick.service;
 
-import org.code.bluetick.persistence.model.Customer;
+import org.code.bluetick.web.mapstruct.dto.CustomerDto;
+import org.code.bluetick.web.mapstruct.dto.CustomerResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface CustomerService {
-    Customer createNewCustomer(Customer user);
+    CustomerResponseDto createNewCustomer(CustomerDto customerDto);
 
-    Customer findCustomerByEmail(String email);
+    CustomerResponseDto findCustomerByEmail(String email);
 
-    Customer findCustomerByMobile(String mobile);
+    CustomerResponseDto findCustomerByMobile(String mobile);
 
-    Page<Customer> getAllCustomers(Pageable pageable);
+    List<CustomerResponseDto> getAllCustomers(Pageable pageable);
 
-    Customer updateCustomer(Customer user);
+    CustomerResponseDto updateCustomer(String email, CustomerDto customerDto);
+
+    void deleteCustomerById(Long id);
 }

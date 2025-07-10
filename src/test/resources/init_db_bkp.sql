@@ -6,6 +6,41 @@ CREATE SCHEMA IF NOT EXISTS crm;
 
 -- GRANT ALL PRIVILEGES ON DATABASE bluetick TO tester;
 
+-- Name: destination; Type: TYPE; Schema: crm;
+-- PostgreSQL does not support CREATE TYPE IF NOT EXISTS, but you can work around this by using a PL/pgSQL block:
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'destination') THEN
+        CREATE TYPE crm.destination AS ENUM (
+            'DUBAI',
+            'SINGAPORE',
+            'MALAYSIA',
+            'THAILAND',
+            'BALI'
+        );
+    END IF;
+END $$;
+
+-- Name: lead_status; Type: TYPE; Schema: crm;
+CREATE TYPE crm.lead_status AS ENUM (
+    'QUOTE_SENT',
+    'QUOTE_EXPIRED'
+);
+
+-- Name: person_type; Type: TYPE; Schema: crm;
+CREATE TYPE crm.person_type AS ENUM (
+    'ADULT',
+    'CHILD'
+);
+
+-- Name: services; Type: TYPE; Schema: crm;
+CREATE TYPE crm.services AS ENUM (
+    'HOTELS',
+    'FLIGHTS',
+    'TRANSFERS',
+    'ACTIVITIES'
+);
+
 -- Table: crm.user
 
 -- DROP TABLE IF EXISTS crm."user";
@@ -107,7 +142,7 @@ CREATE TABLE IF NOT EXISTS crm.lead
     REFERENCES crm.customer (id) MATCH SIMPLE
                            ON UPDATE NO ACTION
                            ON DELETE NO ACTION
-    )
+    );
 
 -- Table: crm.travel_detail
 
@@ -124,7 +159,7 @@ CREATE TABLE IF NOT EXISTS crm.travel_detail
                               destinations crm.destination[] NOT NULL,
                               total_guests crm.person_type[] NOT NULL,
                               CONSTRAINT travel_details_pkey PRIMARY KEY (id)
-    )
+    );
 
 -- SEQUENCE: crm.user_seq
 

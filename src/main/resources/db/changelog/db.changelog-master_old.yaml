@@ -1,0 +1,506 @@
+databaseChangeLog:
+- changeSet:
+    id: 1738768729036-1
+    author: arpgupta (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: customer_pk
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(100)
+        - column:
+            constraints:
+              nullable: false
+            name: email
+            type: VARCHAR(320)
+        - column:
+            constraints:
+              nullable: false
+            name: mobile
+            type: VARCHAR(15)
+        - column:
+            constraints:
+              nullable: false
+            name: birth_date
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: created_at
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: updated_at
+            type: TIMESTAMP WITHOUT TIME ZONE
+        tableName: customer
+- changeSet:
+    id: 1738768729036-2
+    author: arpgupta (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: id_unique
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: full_name
+            type: VARCHAR(50)
+        - column:
+            constraints:
+              nullable: false
+            name: business_name
+            type: VARCHAR(50)
+        - column:
+            constraints:
+              nullable: false
+            name: email_id
+            type: VARCHAR(254)
+        - column:
+            constraints:
+              nullable: false
+            name: mobile_number
+            type: VARCHAR(15)
+        - column:
+            constraints:
+              nullable: false
+            name: country
+            type: VARCHAR(30)
+        - column:
+            constraints:
+              nullable: false
+            name: state
+            type: VARCHAR(30)
+        - column:
+            constraints:
+              nullable: false
+            name: city
+            type: VARCHAR(30)
+        - column:
+            constraints:
+              nullable: false
+            name: created_at
+            type: TIMESTAMP WITH TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: updated_at
+            type: TIMESTAMP WITH TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: enabled
+            type: SMALLINT
+        - column:
+            constraints:
+              nullable: false
+            name: password
+            type: VARCHAR(60)
+        tableName: user
+- changeSet:
+    id: 1738768729036-3
+    author: arpgupta (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: privilege_pkey
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(30)
+        tableName: privilege
+- changeSet:
+    id: 1738768729036-4
+    author: arpgupta (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: role_pkey
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(20)
+        tableName: role
+- changeSet:
+    id: 1738768729036-5
+    author: arpgupta (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: lead_pkey
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: lead_id
+            type: VARCHAR(20)
+        - column:
+            constraints:
+              nullable: false
+            name: customer_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: travel_detail_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: status
+            type: LEAD_STATUS
+        - column:
+            constraints:
+              nullable: false
+            name: services
+            type: SERVICES[]
+        - column:
+            constraints:
+              nullable: false
+            name: created_at
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: updated_at
+            type: TIMESTAMP WITHOUT TIME ZONE
+        tableName: lead
+- changeSet:
+    id: 1738768729036-6
+    author: arpgupta (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: travel_details_pkey
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: departure_city
+            type: VARCHAR(85)
+        - column:
+            constraints:
+              nullable: false
+            name: nationality
+            type: VARCHAR(30)
+        - column:
+            constraints:
+              nullable: false
+            name: travel_date
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: rooms
+            type: SMALLINT
+        - column:
+            constraints:
+              nullable: false
+            name: total_nights
+            type: SMALLINT
+        - column:
+            constraints:
+              nullable: false
+            name: destinations
+            type: DESTINATION[]
+        tableName: travel_detail
+- changeSet:
+    id: 1738768729036-7
+    author: arpgupta (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: traveller_pkey
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(50)
+        - column:
+            constraints:
+              nullable: false
+            name: age
+            type: SMALLINT
+        - column:
+            constraints:
+              nullable: false
+            name: person_type
+            type: PERSON_TYPE
+        - column:
+            constraints:
+              nullable: false
+            name: travel_detail_id
+            type: BIGINT
+        tableName: traveller
+- changeSet:
+    id: 1738768729036-8
+    author: arpgupta (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: email
+        constraintName: customer_email_un
+        tableName: customer
+- changeSet:
+    id: 1738768729036-9
+    author: arpgupta (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: mobile
+        constraintName: customer_mobile_un
+        tableName: customer
+- changeSet:
+    id: 1738768729036-10
+    author: arpgupta (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: email_id
+        constraintName: email_unique
+        tableName: user
+- changeSet:
+    id: 1738768729036-11
+    author: arpgupta (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: mobile_number
+        constraintName: mobile_unique
+        tableName: user
+- changeSet:
+    id: 1738768729036-12
+    author: arpgupta (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: name
+        constraintName: privilege_name_unique
+        tableName: privilege
+- changeSet:
+    id: 1738768729036-13
+    author: arpgupta (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: name
+        constraintName: role_name_unique
+        tableName: role
+- changeSet:
+    id: 1738768729036-14
+    author: arpgupta (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: lead_id
+        constraintName: lead_id_unique
+        tableName: lead
+- changeSet:
+    id: 1738768729036-15
+    author: arpgupta (generated)
+    changes:
+    - createSequence:
+        cacheSize: 1
+        cycle: false
+        dataType: bigint
+        incrementBy: 1
+        maxValue: 9223372036854775807
+        minValue: 1
+        sequenceName: customer_seq
+        startValue: 1
+- changeSet:
+    id: 1738768729036-16
+    author: arpgupta (generated)
+    changes:
+    - createSequence:
+        cacheSize: 1
+        cycle: false
+        dataType: bigint
+        incrementBy: 1
+        maxValue: 9223372036854775807
+        minValue: 1
+        sequenceName: lead_seq
+        startValue: 1
+- changeSet:
+    id: 1738768729036-17
+    author: arpgupta (generated)
+    changes:
+    - createSequence:
+        cacheSize: 1
+        cycle: false
+        dataType: bigint
+        incrementBy: 1
+        maxValue: 9223372036854775807
+        minValue: 1
+        sequenceName: privilege_seq
+        startValue: 1
+- changeSet:
+    id: 1738768729036-18
+    author: arpgupta (generated)
+    changes:
+    - createSequence:
+        cacheSize: 1
+        cycle: false
+        dataType: bigint
+        incrementBy: 1
+        maxValue: 9223372036854775807
+        minValue: 1
+        sequenceName: role_seq
+        startValue: 1
+- changeSet:
+    id: 1738768729036-19
+    author: arpgupta (generated)
+    changes:
+    - createSequence:
+        cacheSize: 1
+        cycle: false
+        dataType: bigint
+        incrementBy: 1
+        maxValue: 9223372036854775807
+        minValue: 1
+        sequenceName: travel_detail_seq
+        startValue: 1
+- changeSet:
+    id: 1738768729036-20
+    author: arpgupta (generated)
+    changes:
+    - createSequence:
+        cacheSize: 1
+        cycle: false
+        dataType: bigint
+        incrementBy: 1
+        maxValue: 9223372036854775807
+        minValue: 1
+        sequenceName: traveller_seq
+        startValue: 1
+- changeSet:
+    id: 1738768729036-21
+    author: arpgupta (generated)
+    changes:
+    - createSequence:
+        cacheSize: 1
+        cycle: false
+        dataType: bigint
+        incrementBy: 1
+        maxValue: 9223372036854775807
+        minValue: 1
+        sequenceName: user_seq
+        startValue: 1
+- changeSet:
+    id: 1738768729036-22
+    author: arpgupta (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: role_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: privilege_id
+            type: BIGINT
+        tableName: roles_privileges
+- changeSet:
+    id: 1738768729036-23
+    author: arpgupta (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: role_id
+            type: BIGINT
+        tableName: user_roles
+- changeSet:
+    id: 1738768729036-24
+    author: arpgupta (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: customer_id
+        baseTableName: lead
+        constraintName: fk_customer
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: customer
+        validate: true
+- changeSet:
+    id: 1738768729036-25
+    author: arpgupta (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: travel_detail_id
+        baseTableName: lead
+        constraintName: fk_travel_detail
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: travel_detail
+        validate: true
+- changeSet:
+    id: 1738768729036-26
+    author: arpgupta (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: travel_detail_id
+        baseTableName: traveller
+        constraintName: fk_travel_id
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: travel_detail
+        validate: true
+

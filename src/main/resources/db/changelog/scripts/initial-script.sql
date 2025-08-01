@@ -7,19 +7,13 @@ CREATE SCHEMA IF NOT EXISTS crm;
 -- GRANT ALL PRIVILEGES ON DATABASE bluetick TO tester;
 
 -- Name: destination; Type: TYPE; Schema: crm;
--- PostgreSQL does not support CREATE TYPE IF NOT EXISTS, but you can work around this by using a PL/pgSQL block:
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'destination') THEN
-        CREATE TYPE crm.destination AS ENUM (
-            'DUBAI',
-            'SINGAPORE',
-            'MALAYSIA',
-            'THAILAND',
-            'BALI'
-        );
-    END IF;
-END $$;
+CREATE TYPE crm.destination AS ENUM (
+    'DUBAI',
+    'SINGAPORE',
+    'MALAYSIA',
+    'THAILAND',
+    'BALI'
+);
 
 -- Name: lead_status; Type: TYPE; Schema: crm;
 CREATE TYPE crm.lead_status AS ENUM (

@@ -1,12 +1,15 @@
 package org.code.bluetick.service;
 
-import org.code.bluetick.persistence.model.Lead;
-import org.springframework.data.domain.Page;
+import org.code.bluetick.web.mapstruct.dto.LeadDto;
+import org.code.bluetick.web.mapstruct.dto.LeadResponseDto;
 import org.springframework.data.domain.Pageable;
 
-public interface LeadService {
-    Lead createNewLead(Lead lead);
+import java.util.List;
 
-    Lead findLeadByLeadId(String leadId);
-    Page<Lead> getAllLeads(Pageable pageable);
+public interface LeadService {
+    LeadResponseDto createNewLead(LeadDto leadDto);
+
+    LeadResponseDto findLeadByLeadId(String leadId);
+
+    List<LeadResponseDto> getAllLeads(Pageable pageable);
 }

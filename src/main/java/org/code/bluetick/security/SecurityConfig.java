@@ -36,8 +36,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         String[] openEndPoints = {"/api/v1/auth/**"};
         String[] healthEndPoints = {"/actuator/**", "/api-docs/**","/swagger-ui-custom.html", "/swagger-ui/**"};
-        String[] customerEndPoints = {"/api/v1/customer/**"};
-        String[] leadEndPoints = {"/api/v1/lead/**"};
+        String[] customerEndPoints = {"/api/v1/customers/**"};
+        String[] leadEndPoints = {"/api/v1/leads/**"};
 
         http
                 .csrf(AbstractHttpConfigurer::disable)

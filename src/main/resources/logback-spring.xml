@@ -4,31 +4,29 @@
     
     <springProfile name="dev">
         <property name="LOG_LEVEL" value="DEBUG"/>
+        <property name="CONSOLE_LOG_LEVEL" value="INFO"/>
         <property name="LOG_PATH" value="logs"/>
     </springProfile>
     
     <springProfile name="prod">
         <property name="LOG_LEVEL" value="INFO"/>
+        <property name="CONSOLE_LOG_LEVEL" value="WARN"/>
         <property name="LOG_PATH" value="/var/log/bluetick"/>
     </springProfile>
     
-    <springProfile name="!dev & !prod">
+    <springProfile name="!dev &amp; !prod">
         <property name="LOG_LEVEL" value="INFO"/>
+        <property name="CONSOLE_LOG_LEVEL" value="INFO"/>
         <property name="LOG_PATH" value="logs"/>
     </springProfile>
 
-    <!-- Console Appender for Development -->
+    <!-- Console Appender - Simple and Clean -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
-            <providers>
-                <timestamp/>
-                <logLevel/>
-                <loggerName/>
-                <mdc/>
-                <arguments/>
-                <message/>
-                <stackTrace/>
-            </providers>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${CONSOLE_LOG_LEVEL}</level>
+        </filter>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -111,37 +109,40 @@
 
     <!-- Logger configurations -->
     <logger name="org.code.bluetick" level="${LOG_LEVEL}" additivity="false">
-        <appender-ref ref="CONSOLE"/>
         <appender-ref ref="APPLICATION_FILE"/>
         <appender-ref ref="ERROR_FILE"/>
+        <appender-ref ref="CONSOLE"/>
     </logger>
 
     <logger name="org.code.bluetick.security" level="${LOG_LEVEL}" additivity="false">
-        <appender-ref ref="CONSOLE"/>
         <appender-ref ref="SECURITY_FILE"/>
         <appender-ref ref="ERROR_FILE"/>
     </logger>
 
     <logger name="org.springframework.security" level="WARN" additivity="false">
-        <appender-ref ref="CONSOLE"/>
         <appender-ref ref="SECURITY_FILE"/>
     </logger>
 
+    <!-- Hibernate SQL logging - only to files in dev profile -->
     <logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
         <springProfile name="dev">
-            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="APPLICATION_FILE"/>
         </springProfile>
     </logger>
 
     <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" additivity="false">
         <springProfile name="dev">
-            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="APPLICATION_FILE"/>
         </springProfile>
     </logger>
 
-    <root level="${LOG_LEVEL}">
+    <!-- Reduce Spring framework noise -->
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.apache.catalina" level="WARN"/>
+    <logger name="org.apache.coyote" level="WARN"/>
+    <logger name="org.apache.tomcat" level="WARN"/>
+
+    <root level="${CONSOLE_LOG_LEVEL}">
         <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="APPLICATION_FILE"/>
-        <appender-ref ref="ERROR_FILE"/>
     </root>
 </configuration> 

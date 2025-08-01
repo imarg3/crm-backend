@@ -60,6 +60,16 @@ public class AuthController {
                      content = @Content(schema = @Schema(implementation = GenericResponse.class)))
     })
     @PostMapping(value = "/sign-up", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
+    /*
+    @RequestBody expects JSON:
+    - @RequestBody tells Spring to deserialize the request body into a Java object.
+    - This works with content type application/json.
+    - It won’t work properly with application/x-www-form-urlencoded, which is meant for form submissions (like HTML forms).
+
+    application/x-www-form-urlencoded is for simple form posts:
+    - Data is sent like: name=John&email=john@example.com
+    - Used with @ModelAttribute, not @RequestBody.
+     */
     public ResponseEntity<GenericResponse<UserResponseDto>> registerUserAccount(@Valid @RequestBody final UserDto userDto, final HttpServletRequest request) {
         log.info("Registering user account with email: {}", userDto.getEmail());
 

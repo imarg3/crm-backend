@@ -1,12 +1,16 @@
 databaseChangeLog:
   - changeSet:
-      id: 01-create-user-customer-and-other-schema
-      author: Arpit Gupta
-      comment: Initial create of tables, sequences & data types
+      id: 00-baseline-existing-database
+      author: system
+      comment: Mark existing database as baseline - tables already exist
       changes:
-        - sqlFile:
-            encoding: utf8
-            path: scripts/initial-script.sql
-            relativeToChangelogFile: true
-            splitStatements: true
-            stripComments: true
+        - tagDatabase:
+            tag: baseline-v1.0.0
+
+  - changeSet:
+      id: 01-future-changes-placeholder
+      author: developer
+      comment: Placeholder for future database changes
+      changes:
+        - sql:
+            sql: SELECT 1 -- No-op placeholder

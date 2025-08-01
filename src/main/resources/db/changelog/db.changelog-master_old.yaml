@@ -1,5 +1,30 @@
 databaseChangeLog:
 - changeSet:
+    id: create-enum-types
+    author: arpgupta
+    comment: Create enum types for lead_status and services
+    changes:
+    - sql:
+        sql: |
+          CREATE TYPE lead_status AS ENUM (
+              'QUOTE_SENT',
+              'QUOTE_EXPIRED'
+          );
+    - sql:
+        sql: |
+          CREATE TYPE services AS ENUM (
+              'STAYS',
+              'FLIGHTS', 
+              'TRANSFERS',
+              'SIGHTSEEING',
+              'CRUISE',
+              'VISA',
+              'INSURANCE',
+              'FERRY',
+              'TRAIN',
+              'BUS'
+          );
+- changeSet:
     id: 1738768729036-1
     author: arpgupta (generated)
     changes:

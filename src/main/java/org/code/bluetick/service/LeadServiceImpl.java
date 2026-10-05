@@ -35,7 +35,7 @@ public class LeadServiceImpl implements LeadService {
 
     @Override
     public LeadResponseDto createNewLead(final LeadDto leadDto) {
-        log.info("Creating new lead for customer email: {}", leadDto.getCustomer().getEmail());
+        log.info("Creating new lead for customer email: {}", leadDto.customer().email());
         Assert.notNull(leadDto, "Lead must not be null");
         
         Lead lead = mapStructMapper.leadDtoToLead(leadDto);

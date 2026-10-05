@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: tag-version-1.1.0
+      author: arpgupta
+      comment: Tag database with version 1.1.0 after CRM enhancements
+      changes:
+        - tagDatabase:
+            tag: v1.1.0

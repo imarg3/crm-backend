@@ -54,6 +54,11 @@ public class Lead implements Serializable {
     @jakarta.validation.constraints.NotNull(message = "Travel details must be specified")
     private TravelDetail travelDetail;
 
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigned_to")
+    private User assignedTo;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", columnDefinition = "crm.status", nullable = false)
     @ColumnTransformer(write = "?::crm.lead_status")

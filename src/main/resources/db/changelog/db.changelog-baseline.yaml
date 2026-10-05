@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00-baseline-existing-database
+      author: system
+      comment: Mark existing database as baseline - tables already exist
+      changes:
+        - tagDatabase:
+            tag: baseline-v1.0.0
+
+  - changeSet:
+      id: 01-future-changes-placeholder
+      author: developer
+      comment: Placeholder for future database changes
+      changes:
+        - sql:
+            sql: SELECT 1 -- No-op placeholder

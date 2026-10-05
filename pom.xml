@@ -5,14 +5,14 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.1</version>
+		<version>3.3.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.code</groupId>
-	<artifactId>bluetick</artifactId>
+	<artifactId>crm</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>bluetick</name>
-	<description>Demo project for Spring Boot</description>
+	<name>crm-backend</name>
+	<description>CRM Backend Application</description>
 
 	<developers>
 		<developer>
@@ -23,16 +23,30 @@
 	</developers>
 
 	<properties>
-		<java.version>17</java.version>
-		<testcontainers.version>1.17.6</testcontainers.version>
-		<mapstruct.version>1.5.3.Final</mapstruct.version>
-		<passay.version>1.3.1</passay.version>
+		<java.version>21</java.version>
+		<testcontainers.version>1.19.8</testcontainers.version>
+		<mapstruct.version>1.5.5.Final</mapstruct.version>
+		<passay.version>1.6.4</passay.version>
 		<json-path.version>2.9.0</json-path.version>
-		<liquibase-core.version>4.8.0</liquibase-core.version>
+		<liquibase-core.version>4.27.0</liquibase-core.version>
 		<liquibase.outputChangeLogFile>src/main/resources/db/changelog/db.changelog-master.yaml</liquibase.outputChangeLogFile>
-		<springdoc-openapi-starter-webmvc-ui.version>2.1.0</springdoc-openapi-starter-webmvc-ui.version>
-		<jjwt.version>0.11.5</jjwt.version>
+		<springdoc-openapi-starter-webmvc-ui.version>2.5.0</springdoc-openapi-starter-webmvc-ui.version>
+		<jjwt.version>0.12.5</jjwt.version>
+		<hypersistence-utils.version>3.7.5</hypersistence-utils.version>
+		<spring-ai.version>1.0.0</spring-ai.version>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.ai</groupId>
+				<artifactId>spring-ai-bom</artifactId>
+				<version>${spring-ai.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -108,10 +122,18 @@
 
 		<dependency>
 			<groupId>io.hypersistence</groupId>
-			<artifactId>hypersistence-utils-hibernate-62</artifactId>
-			<version>3.6.0</version>
+			<artifactId>hypersistence-utils-hibernate-63</artifactId>
+			<version>${hypersistence-utils.version}</version>
 		</dependency>
 
+
+		<!-- AI: Spring AI with OpenAI as default provider (renamed in 1.0.0).
+		     To switch provider: use spring-ai-starter-model-anthropic or spring-ai-starter-model-ollama
+		     and update spring.ai.* properties accordingly. -->
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-starter-model-openai</artifactId>
+		</dependency>
 
 		<!-- Structured Logging -->
 		<dependency>
@@ -188,10 +210,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
+				<version>3.13.0</version>
 				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
+					<release>${java.version}</release>
+					<compilerArgs>
+						<arg>--enable-preview</arg>
+					</compilerArgs>
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
@@ -202,6 +226,12 @@
 							<groupId>org.mapstruct</groupId>
 							<artifactId>mapstruct-processor</artifactId>
 							<version>${mapstruct.version}</version>
+						</path>
+						<!-- This is needed when using both Lombok and MapStruct -->
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok-mapstruct-binding</artifactId>
+							<version>0.2.0</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>

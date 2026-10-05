@@ -3,9 +3,11 @@ package org.code.bluetick;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.code.bluetick.ai.config.AIFeatureProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -18,22 +20,23 @@ import java.util.Arrays;
 
 @SpringBootApplication
 @EnableJpaAuditing
+@EnableConfigurationProperties(AIFeatureProperties.class)
 @Slf4j
-public class BluetickApplication {
-	
+public class CrmApplication {
+
 	private final Environment environment;
-	
-	public BluetickApplication(Environment environment) {
+
+	public CrmApplication(Environment environment) {
 		this.environment = environment;
 	}
 
 	@PostConstruct
 	public void init() {
 		// Set application context in MDC for structured logging
-		MDC.put("application", "bluetick-crm");
-		MDC.put("version", getClass().getPackage().getImplementationVersion() != null ? 
+		MDC.put("application", "crm-backend");
+		MDC.put("version", getClass().getPackage().getImplementationVersion() != null ?
 				getClass().getPackage().getImplementationVersion() : "development");
-		
+
 		LocalDateTime timeIST = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
 		log.info("Application starting at: {}", timeIST);
 		log.info("Active profiles: {}", Arrays.toString(environment.getActiveProfiles()));
@@ -45,7 +48,7 @@ public class BluetickApplication {
 			String hostAddress = InetAddress.getLocalHost().getHostAddress();
 			String serverPort = environment.getProperty("server.port", "8080");
 			String contextPath = environment.getProperty("server.servlet.context-path", "");
-			
+
 			log.info("Application started successfully");
 			log.info("Local URL: http://localhost:{}{}", serverPort, contextPath);
 			log.info("External URL: http://{}:{}{}", hostAddress, serverPort, contextPath);
@@ -57,9 +60,9 @@ public class BluetickApplication {
 	}
 
 	public static void main(String[] args) {
-		System.setProperty("spring.application.name", "bluetick-crm");
-		
-		log.info("Starting Bluetick CRM Application...");
-		SpringApplication.run(BluetickApplication.class, args);
+		System.setProperty("spring.application.name", "crm-backend");
+
+		log.info("Starting CRM Backend Application...");
+		SpringApplication.run(CrmApplication.class, args);
 	}
 }

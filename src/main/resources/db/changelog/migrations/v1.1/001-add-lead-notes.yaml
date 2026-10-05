@@ -1,0 +1,133 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-lead-note-table
+      author: arpgupta
+      comment: Create lead_note table for tracking notes and comments on leads
+      changes:
+        - createTable:
+            tableName: lead_note
+            schemaName: crm
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: lead_note_pkey
+                    nullable: false
+              - column:
+                  name: lead_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: note_content
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: note_type
+                  type: VARCHAR(50)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
+      rollback:
+        - dropTable:
+            tableName: lead_note
+            schemaName: crm
+
+  - changeSet:
+      id: create-lead-note-sequence
+      author: arpgupta
+      comment: Create sequence for lead_note table
+      changes:
+        - createSequence:
+            sequenceName: lead_note_seq
+            schemaName: crm
+            dataType: bigint
+            incrementBy: 1
+            startValue: 1
+            cacheSize: 1
+      rollback:
+        - dropSequence:
+            sequenceName: lead_note_seq
+            schemaName: crm
+
+  - changeSet:
+      id: add-lead-note-foreign-keys
+      author: arpgupta
+      comment: Add foreign key constraints to lead_note table
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: lead_note
+            baseTableSchemaName: crm
+            baseColumnNames: lead_id
+            constraintName: fk_lead_note_lead
+            referencedTableName: lead
+            referencedTableSchemaName: crm
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: lead_note
+            baseTableSchemaName: crm
+            baseColumnNames: created_by
+            constraintName: fk_lead_note_user
+            referencedTableName: user
+            referencedTableSchemaName: crm
+            referencedColumnNames: id
+            onDelete: NO ACTION
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: lead_note
+            baseTableSchemaName: crm
+            constraintName: fk_lead_note_lead
+        - dropForeignKeyConstraint:
+            baseTableName: lead_note
+            baseTableSchemaName: crm
+            constraintName: fk_lead_note_user
+
+  - changeSet:
+      id: create-lead-note-indexes
+      author: arpgupta
+      comment: Create indexes on lead_note table for query performance
+      changes:
+        - createIndex:
+            indexName: idx_lead_note_lead_id
+            tableName: lead_note
+            schemaName: crm
+            columns:
+              - column:
+                  name: lead_id
+        - createIndex:
+            indexName: idx_lead_note_created_by
+            tableName: lead_note
+            schemaName: crm
+            columns:
+              - column:
+                  name: created_by
+        - createIndex:
+            indexName: idx_lead_note_created_at
+            tableName: lead_note
+            schemaName: crm
+            columns:
+              - column:
+                  name: created_at
+                  descending: true
+      rollback:
+        - dropIndex:
+            indexName: idx_lead_note_lead_id
+            schemaName: crm
+        - dropIndex:
+            indexName: idx_lead_note_created_by
+            schemaName: crm
+        - dropIndex:
+            indexName: idx_lead_note_created_at
+            schemaName: crm

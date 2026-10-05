@@ -3,15 +3,17 @@ package org.code.bluetick.web.mapstruct.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 
-@Data
-public class LoginDto {
+/**
+ * Login request DTO using Java record for immutability.
+ * Records provide automatic equals(), hashCode(), toString(), and getters.
+ */
+public record LoginDto(
     @Email(message = "Email is not valid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
     @NotEmpty(message = "Email cannot be empty")
     @NotNull(message = "Please provide User email address")
-    private String usernameOrEmail;
+    String usernameOrEmail,
 
     @NotNull(message = "Please provide User password")
-    private String password;
-}
+    String password
+) {}

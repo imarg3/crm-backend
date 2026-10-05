@@ -19,92 +19,120 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+/**
+ * Global exception handler using Java 21 pattern matching and switch expressions.
+ * Centralizes error handling across all REST controllers.
+ */
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice
 @Slf4j
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = { IllegalArgumentException.class, IllegalStateException.class })
-    protected ResponseEntity<Object> handleBadRequest(RuntimeException ex, WebRequest request) {
-        log.error("Bad request exception: {}", ex.getMessage());
-        ApiError error = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getDescription(false));
-        return handleExceptionInternal(ex, error, null, HttpStatus.BAD_REQUEST, request);
-    }
-
-    @ExceptionHandler(value = { UserAlreadyExistException.class })
-    @ResponseStatus(value = HttpStatus.CONFLICT)
-    protected ResponseEntity<Object> handleUserAlreadyExistsException(UserAlreadyExistException ex, WebRequest request) {
-        log.error("User already exists: {}", ex.getMessage());
-        ApiError error = new ApiError(HttpStatus.CONFLICT, ex.getMessage(), request.getDescription(false));
-        return handleExceptionInternal(ex, error, null, HttpStatus.CONFLICT, request);
-    }
-
-    @ExceptionHandler(value = { UserNotFoundException.class, CustomerNotFoundException.class, LeadNotFoundException.class })
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    protected ResponseEntity<Object> handleNotFound(RuntimeException ex, WebRequest request) {
-        log.error("Resource not found: {}", ex.getMessage());
-        ApiError error = new ApiError(HttpStatus.NOT_FOUND, ex.getMessage(), request.getDescription(false));
-        return handleExceptionInternal(ex, error, null, HttpStatus.NOT_FOUND, request);
-    }
-
-    @ExceptionHandler(value = { LeadAlreadyExistException.class })
-    @ResponseStatus(value = HttpStatus.CONFLICT)
-    protected ResponseEntity<Object> handleLeadAlreadyExistsException(LeadAlreadyExistException ex, WebRequest request) {
-        log.error("Lead already exists: {}", ex.getMessage());
-        ApiError error = new ApiError(HttpStatus.CONFLICT, ex.getMessage(), request.getDescription(false));
-        return handleExceptionInternal(ex, error, null, HttpStatus.CONFLICT, request);
-    }
-
-    @ExceptionHandler(value = { AuthenticationException.class, BadCredentialsException.class })
-    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-    protected ResponseEntity<Object> handleAuthenticationException(AuthenticationException ex, WebRequest request) {
-        log.error("Authentication failed: {}", ex.getMessage());
-        ApiError error = new ApiError(HttpStatus.UNAUTHORIZED, "Authentication failed", request.getDescription(false));
-        return handleExceptionInternal(ex, error, null, HttpStatus.UNAUTHORIZED, request);
-    }
-
-    @ExceptionHandler(value = { AccessDeniedException.class })
-    @ResponseStatus(value = HttpStatus.FORBIDDEN)
-    protected ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
-        log.error("Access denied: {}", ex.getMessage());
-        ApiError error = new ApiError(HttpStatus.FORBIDDEN, "Access denied", request.getDescription(false));
-        return handleExceptionInternal(ex, error, null, HttpStatus.FORBIDDEN, request);
-    }
-
-    @ExceptionHandler(value = { SendMailException.class })
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    protected ResponseEntity<Object> handleMailException(SendMailException ex, WebRequest request) {
-        log.error("Mail sending failed: {}", ex.getMessage());
-        ApiError error = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "Mail service temporarily unavailable", request.getDescription(false));
-        return handleExceptionInternal(ex, error, null, HttpStatus.INTERNAL_SERVER_ERROR, request);
-    }
-
-    @ExceptionHandler(value = { Exception.class })
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    protected ResponseEntity<Object> handleGenericException(Exception ex, WebRequest request) {
-        log.error("Unexpected error occurred: {}", ex.getMessage(), ex);
-        ApiError error = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", request.getDescription(false));
-        return handleExceptionInternal(ex, error, null, HttpStatus.INTERNAL_SERVER_ERROR, request);
+    /**
+     * Handles various exceptions using Java 21 pattern matching for instanceof.
+     * This demonstrates modern exception handling patterns.
+     */
+    @ExceptionHandler(Exception.class)
+    protected ResponseEntity<Object> handleGlobalException(Exception ex, WebRequest request) {
+        // Java 21 pattern matching for instanceof with switch expression
+        return switch (ex) {
+            case IllegalArgumentException iae -> {
+                log.error("Bad request - Illegal argument: {}", iae.getMessage());
+                yield buildErrorResponse(HttpStatus.BAD_REQUEST, iae.getMessage(), request);
+            }
+            case IllegalStateException ise -> {
+                log.error("Bad request - Illegal state: {}", ise.getMessage());
+                yield buildErrorResponse(HttpStatus.BAD_REQUEST, ise.getMessage(), request);
+            }
+            case UserAlreadyExistException uae -> {
+                log.error("User already exists: {}", uae.getMessage());
+                yield buildErrorResponse(HttpStatus.CONFLICT, uae.getMessage(), request);
+            }
+            case LeadAlreadyExistException lae -> {
+                log.error("Lead already exists: {}", lae.getMessage());
+                yield buildErrorResponse(HttpStatus.CONFLICT, lae.getMessage(), request);
+            }
+            case UserNotFoundException unf -> {
+                log.error("User not found: {}", unf.getMessage());
+                yield buildErrorResponse(HttpStatus.NOT_FOUND, unf.getMessage(), request);
+            }
+            case CustomerNotFoundException cnf -> {
+                log.error("Customer not found: {}", cnf.getMessage());
+                yield buildErrorResponse(HttpStatus.NOT_FOUND, cnf.getMessage(), request);
+            }
+            case LeadNotFoundException lnf -> {
+                log.error("Lead not found: {}", lnf.getMessage());
+                yield buildErrorResponse(HttpStatus.NOT_FOUND, lnf.getMessage(), request);
+            }
+            case BadCredentialsException bce -> {
+                log.error("Bad credentials: {}", bce.getMessage());
+                yield buildErrorResponse(HttpStatus.UNAUTHORIZED, "Invalid credentials", request);
+            }
+            case AuthenticationException ae -> {
+                log.error("Authentication failed: {}", ae.getMessage());
+                yield buildErrorResponse(HttpStatus.UNAUTHORIZED, "Authentication failed", request);
+            }
+            case AccessDeniedException ade -> {
+                log.error("Access denied: {}", ade.getMessage());
+                yield buildErrorResponse(HttpStatus.FORBIDDEN, "Access denied", request);
+            }
+            case SendMailException sme -> {
+                log.error("Mail sending failed: {}", sme.getMessage());
+                yield buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Mail service temporarily unavailable", request);
+            }
+            default -> {
+                log.error("Unexpected error occurred: {}", ex.getMessage(), ex);
+                yield buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "An unexpected error occurred", request);
+            }
+        };
     }
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
         List<String> errors = ex.getBindingResult().getFieldErrors()
-                .stream().map(FieldError::getDefaultMessage)
+                .stream()
+                .map(FieldError::getDefaultMessage)
                 .toList();
+
         log.error("Validation failed: {}", errors);
-        ApiError errorDetails = new ApiError(HttpStatus.BAD_REQUEST, "Validation failed", request.getDescription(false), errors);
+        ApiError errorDetails = new ApiError(
+            HttpStatus.BAD_REQUEST,
+            "Validation failed",
+            request.getDescription(false),
+            errors
+        );
         return handleExceptionInternal(ex, errorDetails, headers, HttpStatus.BAD_REQUEST, request);
     }
 
     @Override
-    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
-        if(HttpStatus.INTERNAL_SERVER_ERROR.equals(statusCode)) {
-            request.setAttribute("javax.servlet.error.exception", ex, 0);
+    protected ResponseEntity<Object> handleExceptionInternal(
+            Exception ex,
+            Object body,
+            HttpHeaders headers,
+            HttpStatusCode statusCode,
+            WebRequest request) {
+        if (HttpStatus.INTERNAL_SERVER_ERROR.equals(statusCode)) {
+            request.setAttribute("jakarta.servlet.error.exception", ex, 0);
         }
-
         return new ResponseEntity<>(body, headers, statusCode);
+    }
+
+    /**
+     * Helper method to build consistent error responses.
+     * Uses modern Java features for cleaner code.
+     */
+    private ResponseEntity<Object> buildErrorResponse(
+            HttpStatus status,
+            String message,
+            WebRequest request) {
+        ApiError error = new ApiError(status, message, request.getDescription(false));
+        return new ResponseEntity<>(error, status);
     }
 }

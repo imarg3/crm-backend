@@ -95,10 +95,10 @@ public class AuthController {
     })
     @PostMapping(value = "/sign-in", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GenericResponse<JwtResponse>> authenticateUser(@Valid @RequestBody final LoginDto loginDto) {
-        log.info("Authenticating user with username/email: {}", loginDto.getUsernameOrEmail());
+        log.info("Authenticating user with username/email: {}", loginDto.usernameOrEmail());
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginDto.getUsernameOrEmail(), loginDto.getPassword()
+                loginDto.usernameOrEmail(), loginDto.password()
         ));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);

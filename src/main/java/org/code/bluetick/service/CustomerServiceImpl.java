@@ -28,7 +28,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerResponseDto createNewCustomer(CustomerDto customerDto) {
-        log.info("Creating new customer with email: {}", customerDto.getEmail());
+        log.info("Creating new customer with email: {}", customerDto.email());
         Customer customer = mapStructMapper.customerDtoToCustomer(customerDto);
         Customer savedCustomer = customerRepository.save(customer);
         return mapStructMapper.customerToCustomerResponseDto(savedCustomer);
@@ -74,9 +74,9 @@ public class CustomerServiceImpl implements CustomerService {
                 .orElseThrow(() -> new CustomerNotFoundException("No customer found with email: " + email));
         
         // Update fields
-        existingCustomer.setName(customerDto.getName());
-        existingCustomer.setMobile(customerDto.getMobile());
-        existingCustomer.setBirthDate(customerDto.getBirthDate());
+        existingCustomer.setName(customerDto.name());
+        existingCustomer.setMobile(customerDto.mobile());
+        existingCustomer.setBirthDate(customerDto.birthDate());
         
         Customer updatedCustomer = customerRepository.save(existingCustomer);
         return mapStructMapper.customerToCustomerResponseDto(updatedCustomer);

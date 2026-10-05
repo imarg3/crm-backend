@@ -1,0 +1,139 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-lead-activity-table
+      author: arpgupta
+      comment: Create lead_activity table for audit trail of lead changes
+      changes:
+        - createTable:
+            tableName: lead_activity
+            schemaName: crm
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: lead_activity_pkey
+                    nullable: false
+              - column:
+                  name: lead_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: performed_by
+                  type: BIGINT
+              - column:
+                  name: activity_type
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(500)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: old_value
+                  type: VARCHAR(500)
+              - column:
+                  name: new_value
+                  type: VARCHAR(500)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
+      rollback:
+        - dropTable:
+            tableName: lead_activity
+            schemaName: crm
+
+  - changeSet:
+      id: create-lead-activity-sequence
+      author: arpgupta
+      comment: Create sequence for lead_activity table
+      changes:
+        - createSequence:
+            sequenceName: lead_activity_seq
+            schemaName: crm
+            dataType: bigint
+            incrementBy: 1
+            startValue: 1
+            cacheSize: 1
+      rollback:
+        - dropSequence:
+            sequenceName: lead_activity_seq
+            schemaName: crm
+
+  - changeSet:
+      id: add-lead-activity-foreign-keys
+      author: arpgupta
+      comment: Add foreign key constraints to lead_activity table
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: lead_activity
+            baseTableSchemaName: crm
+            baseColumnNames: lead_id
+            constraintName: fk_lead_activity_lead
+            referencedTableName: lead
+            referencedTableSchemaName: crm
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: lead_activity
+            baseTableSchemaName: crm
+            baseColumnNames: performed_by
+            constraintName: fk_lead_activity_user
+            referencedTableName: user
+            referencedTableSchemaName: crm
+            referencedColumnNames: id
+            onDelete: SET NULL
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: lead_activity
+            baseTableSchemaName: crm
+            constraintName: fk_lead_activity_lead
+        - dropForeignKeyConstraint:
+            baseTableName: lead_activity
+            baseTableSchemaName: crm
+            constraintName: fk_lead_activity_user
+
+  - changeSet:
+      id: create-lead-activity-indexes
+      author: arpgupta
+      comment: Create indexes on lead_activity table for query performance
+      changes:
+        - createIndex:
+            indexName: idx_lead_activity_lead_id
+            tableName: lead_activity
+            schemaName: crm
+            columns:
+              - column:
+                  name: lead_id
+        - createIndex:
+            indexName: idx_lead_activity_type
+            tableName: lead_activity
+            schemaName: crm
+            columns:
+              - column:
+                  name: activity_type
+        - createIndex:
+            indexName: idx_lead_activity_created_at
+            tableName: lead_activity
+            schemaName: crm
+            columns:
+              - column:
+                  name: created_at
+                  descending: true
+      rollback:
+        - dropIndex:
+            indexName: idx_lead_activity_lead_id
+            schemaName: crm
+        - dropIndex:
+            indexName: idx_lead_activity_type
+            schemaName: crm
+        - dropIndex:
+            indexName: idx_lead_activity_created_at
+            schemaName: crm

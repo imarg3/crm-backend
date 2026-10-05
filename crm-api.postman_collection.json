@@ -1,0 +1,329 @@
+{
+  "info": {
+    "name": "CRM Backend API",
+    "description": "Complete API collection for the CRM Backend application.\n\n## Setup\n1. Import this collection.\n2. Create an environment with variable `baseUrl` = `http://localhost:8080`.\n3. Run **Sign In** first — the `token` variable is set automatically via the test script.\n4. All protected requests use `{{token}}` automatically.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" },
+    { "key": "token",   "value": "",                     "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Registration and authentication endpoints. No Bearer token required.",
+      "item": [
+        {
+          "name": "Sign Up",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/auth/sign-up", "host": ["{{baseUrl}}"], "path": ["api", "v1", "auth", "sign-up"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Arpit Gupta\",\n  \"businessName\": \"Travel Co\",\n  \"email\": \"arpit@example.com\",\n  \"password\": \"MyPass@123\",\n  \"matchingPassword\": \"MyPass@123\",\n  \"mobile\": \"+919876543210\",\n  \"country\": \"India\",\n  \"state\": \"Maharashtra\",\n  \"city\": \"Mumbai\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Register a new user account.\n\nPassword rules:\n- Minimum 8 characters\n- At least 1 uppercase, 1 lowercase, 1 digit, 1 special character\n- `password` and `matchingPassword` must match"
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "status": "Created",
+              "code": 201,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"status\": \"SUCCESS\",\n  \"message\": \"User registered successfully\",\n  \"data\": {\n    \"email\": \"arpit@example.com\",\n    \"fullName\": \"Arpit Gupta\",\n    \"businessName\": \"Travel Co\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Sign In",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json && json.data && json.data.token) {",
+                  "    pm.collectionVariables.set('token', json.data.token);",
+                  "    console.log('Token saved to collection variable: token');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/auth/sign-in", "host": ["{{baseUrl}}"], "path": ["api", "v1", "auth", "sign-in"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usernameOrEmail\": \"arpit@example.com\",\n  \"password\": \"MyPass@123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Authenticate a user. The JWT token is automatically saved to the `token` collection variable so all protected requests use it immediately."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"status\": \"SUCCESS\",\n  \"message\": \"Authentication successful\",\n  \"data\": {\n    \"token\": \"<jwt>\",\n    \"email\": \"arpit@example.com\",\n    \"roles\": [\"ROLE_AGENT\"]\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Customers",
+      "description": "Customer management endpoints. All require `Authorization: Bearer {{token}}`.",
+      "item": [
+        {
+          "name": "List All Customers",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers?page=0&size=20&sort=name,asc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers"],
+              "query": [
+                { "key": "page", "value": "0",        "description": "Page number (0-based)" },
+                { "key": "size", "value": "20",       "description": "Page size" },
+                { "key": "sort", "value": "name,asc", "description": "Sort field and direction" }
+              ]
+            },
+            "description": "Returns a paginated list of all customers."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Customer",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/customers", "host": ["{{baseUrl}}"], "path": ["api", "v1", "customers"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"mobile\": \"+919876543210\",\n  \"birthDate\": \"1990-05-15\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Create a new customer. Email and mobile must be unique."
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "status": "Created",
+              "code": 201,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"status\": \"SUCCESS\",\n  \"message\": \"Customer created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"John Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"mobile\": \"+919876543210\",\n    \"birthDate\": \"1990-05-15\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Customer by Email",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers/john.doe@example.com",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers", "john.doe@example.com"]
+            },
+            "description": "Retrieve a single customer by their email address."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Customer",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers/john.doe@example.com",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers", "john.doe@example.com"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Updated Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"mobile\": \"+919876543210\",\n  \"birthDate\": \"1990-05-15\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Update an existing customer. Path param is the customer's current email."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Customer by ID",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers", "1"]
+            },
+            "description": "Delete a customer by their numeric database ID."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Leads",
+      "description": "Lead/booking management endpoints. All require `Authorization: Bearer {{token}}`.",
+      "item": [
+        {
+          "name": "List All Leads",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/leads?page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "leads"],
+              "query": [
+                { "key": "page", "value": "0",  "description": "Page number (0-based)" },
+                { "key": "size", "value": "20", "description": "Page size" }
+              ]
+            },
+            "description": "Returns a paginated list of all leads."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Lead",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/v1/leads", "host": ["{{baseUrl}}"], "path": ["api", "v1", "leads"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer\": {\n    \"name\": \"John Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"mobile\": \"+919876543210\",\n    \"birthDate\": \"1990-05-15\"\n  },\n  \"travelDetail\": {\n    \"departureCity\": \"Mumbai\",\n    \"nationality\": \"Indian\",\n    \"travelDate\": \"2026-09-15\",\n    \"rooms\": 2,\n    \"totalNights\": 5,\n    \"destinations\": [\"Dubai\", \"Singapore\"],\n    \"travellers\": [\n      { \"name\": \"John Doe\", \"age\": 35, \"personType\": \"Adult\" },\n      { \"name\": \"Jane Doe\", \"age\": 30, \"personType\": \"Adult\" },\n      { \"name\": \"Tom Doe\",  \"age\":  8, \"personType\": \"Child\" }\n    ]\n  },\n  \"services\": [\"Stays\", \"Flights\", \"Transfers\", \"Sightseeing\"]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Create a new lead with customer and travel details.\n\nValid destinations: `Dubai`, `Singapore`, `Malaysia`, `Thailand`, `Bali`\n\nValid services: `Stays`, `Flights`, `Transfers`, `Sightseeing`, `Cruise`, `Visa`, `Insurance`, `Ferry`, `Train`, `Bus`\n\nValid personType: `Adult`, `Child`\n\nConstraints:\n- `rooms`: 1–10\n- `totalNights`: 1–20\n- `travelDate`: today or in the future"
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "status": "Created",
+              "code": 201,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"status\": \"SUCCESS\",\n  \"message\": \"Lead created successfully\",\n  \"data\": {\n    \"leadId\": \"CRM-ABCDE-001\",\n    \"customer\": { ... },\n    \"travelDetail\": { ... },\n    \"services\": [\"Stays\", \"Flights\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Lead by Lead ID",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/leads/CRM-ABCDE-001",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "leads", "CRM-ABCDE-001"]
+            },
+            "description": "Retrieve a lead by its generated lead ID (e.g. `CRM-ABCDE-001`). The lead ID is returned in the create lead response."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "AI (feature-flagged)",
+      "description": "AI-powered lead assistance endpoints.\n\nRequirements:\n- `Authorization: Bearer {{token}}`\n- Application started with `AI_ENABLED=true` and a valid `OPENAI_API_KEY`\n\nIf the feature flag is off these endpoints return 404.",
+      "item": [
+        {
+          "name": "Summarize Lead",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/ai/leads/CRM-ABCDE-001/summary",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "ai", "leads", "CRM-ABCDE-001", "summary"]
+            },
+            "description": "Generate a natural-language summary of the lead's details using AI."
+          },
+          "response": []
+        },
+        {
+          "name": "Draft Follow-up Email",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/ai/leads/CRM-ABCDE-001/email-draft",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "ai", "leads", "CRM-ABCDE-001", "email-draft"]
+            },
+            "description": "Generate a personalized follow-up email draft for the lead."
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Itinerary",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/ai/leads/CRM-ABCDE-001/itinerary",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "ai", "leads", "CRM-ABCDE-001", "itinerary"]
+            },
+            "description": "Generate a day-by-day travel itinerary for the lead based on their travel details."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health & Info",
+      "description": "Spring Boot Actuator endpoints — no authentication required.",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/actuator/health", "host": ["{{baseUrl}}"], "path": ["actuator", "health"] },
+            "description": "Returns application health status. Useful for verifying the service is up."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"status\": \"UP\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "App Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/actuator/info", "host": ["{{baseUrl}}"], "path": ["actuator", "info"] },
+            "description": "Returns application metadata (name, description, version)."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

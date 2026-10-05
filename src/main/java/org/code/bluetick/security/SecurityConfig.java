@@ -38,6 +38,7 @@ public class SecurityConfig {
         String[] healthEndPoints = {"/actuator/**", "/api-docs/**","/swagger-ui-custom.html", "/swagger-ui/**"};
         String[] customerEndPoints = {"/api/v1/customers/**"};
         String[] leadEndPoints = {"/api/v1/leads/**"};
+        String[] aiEndPoints = {"/api/v1/ai/**"};
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -47,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers(openEndPoints).permitAll()
                         .requestMatchers(customerEndPoints).authenticated()
                         .requestMatchers(leadEndPoints).authenticated()
+                        .requestMatchers(aiEndPoints).authenticated()
                         .requestMatchers(HttpMethod.GET, healthEndPoints).permitAll()
                         .anyRequest().authenticated()
                 );

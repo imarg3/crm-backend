@@ -6,7 +6,6 @@ import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 import org.code.bluetick.enums.Destination;
 import org.code.bluetick.persistence.model.Traveller;
 
@@ -14,34 +13,36 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
-@Data
+/**
+ * Travel Detail DTO using Java record for immutability.
+ * Contains all travel-related information for a booking.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TravelDetailDto {
-
+public record TravelDetailDto(
     @JsonProperty("departureCity")
     @NotNull(message = "Departure City must be specified.")
-    String departureCity;
+    String departureCity,
 
     @NotNull(message = "Nationality must be specified.")
-    String nationality;
+    String nationality,
 
     @JsonProperty("travelDate")
     @NotNull(message = "Travel Date must be specified.")
     @FutureOrPresent(message = "Travel date must be today or in future")
-    LocalDate travelDate;
+    LocalDate travelDate,
 
     @Min(value = 1, message = "Minimum 1 room should be booked")
     @Max(value = 10, message = "Maximum 10 rooms should be booked in a single booking")
-    int rooms;
+    int rooms,
 
     @JsonProperty("totalNights")
     @Min(value = 1, message = "Minimum 1N/2D should be booked")
     @Max(value = 20, message = "Maximum 20N/21D should be booked in a single booking")
-    int totalNights;
+    int totalNights,
 
     @JsonProperty("destinations")
-    Set<Destination> destinations;
+    Set<Destination> destinations,
 
     @JsonProperty("travellers")
-    List<Traveller> travellers;
-}
+    List<Traveller> travellers
+) {}

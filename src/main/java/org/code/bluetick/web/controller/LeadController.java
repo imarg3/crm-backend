@@ -31,7 +31,7 @@ public class LeadController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GenericResponse<LeadResponseDto>> createLead(@Valid @RequestBody final LeadDto leadDto) {
-        log.info("Creating new lead with customer email: {}", leadDto.getCustomer().getEmail());
+        log.info("Creating new lead with customer email: {}", leadDto.customer().email());
 
         final LeadResponseDto lead = leadService.createNewLead(leadDto);
         log.info("Lead created successfully with ID: {}", lead.getLeadId());

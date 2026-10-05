@@ -1,0 +1,69 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-lead-assigned-to-column
+      author: arpgupta
+      comment: Add assigned_to column to lead table for CRM workflow management
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - columnExists:
+                tableName: lead
+                schemaName: crm
+                columnName: assigned_to
+      changes:
+        - addColumn:
+            tableName: lead
+            schemaName: crm
+            columns:
+              - column:
+                  name: assigned_to
+                  type: BIGINT
+                  remarks: User ID of the agent assigned to this lead
+      rollback:
+        - dropColumn:
+            tableName: lead
+            schemaName: crm
+            columnName: assigned_to
+
+  - changeSet:
+      id: add-lead-assigned-to-foreign-key
+      author: arpgupta
+      comment: Add foreign key constraint for assigned_to column
+      preConditions:
+        - onFail: MARK_RAN
+        - columnExists:
+            tableName: lead
+            schemaName: crm
+            columnName: assigned_to
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: lead
+            baseTableSchemaName: crm
+            baseColumnNames: assigned_to
+            constraintName: fk_lead_assigned_user
+            referencedTableName: user
+            referencedTableSchemaName: crm
+            referencedColumnNames: id
+            onDelete: SET NULL
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: lead
+            baseTableSchemaName: crm
+            constraintName: fk_lead_assigned_user
+
+  - changeSet:
+      id: create-lead-assigned-to-index
+      author: arpgupta
+      comment: Create index on assigned_to for efficient queries by agent
+      changes:
+        - createIndex:
+            indexName: idx_lead_assigned_to
+            tableName: lead
+            schemaName: crm
+            columns:
+              - column:
+                  name: assigned_to
+      rollback:
+        - dropIndex:
+            indexName: idx_lead_assigned_to
+            schemaName: crm
